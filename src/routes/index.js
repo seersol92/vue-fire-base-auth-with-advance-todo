@@ -23,9 +23,18 @@ const router = new Router({
     {
         path: '/dashboard',
         name: 'Dashboard',
-        component: Dashboard
+        component: Dashboard,
+        meta : {
+            requireAuth: true
+        }
     }
 ]
+});
+
+router.beforeEach((to, from, next) => {
+    if(to.matched.some(record => record.meta.requireAuth)) {
+
+    }
 });
 
 export default router

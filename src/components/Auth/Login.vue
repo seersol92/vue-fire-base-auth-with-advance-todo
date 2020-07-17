@@ -4,11 +4,10 @@
       <div class="col-md-8">
         <div class="card">
           <div class="card-header">Login</div>
+          {{getUser}}
           <div class="card-body">
             <div v-if="error" class="alert alert-danger">{{error}}</div>
             <form action="#" @submit.prevent="submit">
-            
-
               <div class="form-group row">
                 <label for="email" class="col-md-4 col-form-label text-md-right">Email</label>
 
@@ -21,7 +20,7 @@
                     value
                     required
                     autofocus
-                    v-model="form.email"
+                    v-model="email"
                   />
                 </div>
               </div>
@@ -36,14 +35,21 @@
                     class="form-control"
                     name="password"
                     required
-                    v-model="form.password"
+                    v-model="password"
                   />
                 </div>
               </div>
-
               <div class="form-group row mb-0">
                 <div class="col-md-6 offset-md-4">
-                  <button type="submit" class="btn btn-primary btn-block">Login</button>
+                {{isLoading}}
+                  <button 
+                  type="submit" 
+                  :disabled="isLoading"
+                  class="btn btn-primary btn-block"
+                  > 
+                  <span v-if="isLoading">Loading....</span>
+                  <span v-else>Login</span>
+                  </button>
                 </div>
               </div>
             </form>
@@ -57,32 +63,36 @@
 
 <script>
 import firebase from "firebase";
+import {mapGetters, mapActions } from "vuex";
 
 export default {
   data() {
     return {
-      form: {
         email: "",
-        password: ""
-      },
-      error: null
+        password: "",
+        error: "",
+        isLoading: false
     };
   },
+  computed:{ 
+    ...mapGetters(["getUser"])
+  },
+
   methods: {
     submit() {
-      firebase
+      this.isLoading = true;
+       firebase
         .auth()
-        .createUserWithEmailAndPassword(this.form.email, this.form.password)
+        .signInWithEmailAndPassword(this.email, this.password)
         .then(data => {
-          data.user
-            .updateProfile({
-              displayName: this.form.name
-            })
-            .then(() => {});
+          console.log(data.user)
+            this.$store.dispatch("setUser", data.user); 
+            this.$router.replace({ name: "Dashboard" });
         })
         .catch(err => {
-          this.error = err.message;
-        });
+            this.error = err.message;
+        }).finally( 
+          () => this.isLoading = false);
     }
   }
 };

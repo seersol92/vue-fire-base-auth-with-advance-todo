@@ -7,12 +7,11 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto">
-       
             <li class="nav-item">
-                <a class="nav-link" href="#">Register</a>
+                <router-link :to="{ name: 'Register'}"  class="nav-link">Register</router-link>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Login</a>
+                 <router-link :to="{ name: 'login'}"  class="nav-link">Login</router-link>
             </li>
         </ul>
     </div>
